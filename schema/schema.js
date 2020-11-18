@@ -13,7 +13,7 @@ const customer = [
     { id:1,code:"c01",name:"choiseongjun",mobile:"01030022702"}
 ];
 const order = [
-    {id:1,code:"o01",customer_id:"1",detail:{model:"iPhone X",color:"Space Gray",size:"large",order_date:"2020년 10월"},status:"delivered"}
+    {id:1,code:"o01",customer_id:"1",detail:{model:"iPhone X",color:"Space Gray",size:"large",order_date:"2020년 10월"},status:"delivered"}
 ]
 const CustomerType = new GraphQLObjectType({
     name: 'customer',
@@ -35,14 +35,13 @@ const OrderType = new GraphQLObjectType({
         customer:{
             type:CustomerType,
             resolve(parent,args){
-                console.log(parent)
                 return _.find(customer,{id:parent.id});
             }
         }
     })
 });
 const detailType = new graphql.GraphQLObjectType({
-    name: 'Author_detail',
+    name: 'Order_detail',
     fields: {
       model: { type: graphql.GraphQLString },
       color: { type: graphql.GraphQLString },
@@ -65,16 +64,14 @@ const RootQuery = new GraphQLObjectType({
         },
         order:{
             type:OrderType,
-            args:{id:{type:GraphQLInt}},
+            args:{status:{type:GraphQLString},model:{type:GraphQLString},color:{type:GraphQLString},order_date:{type:GraphQLString}},
             resolve(parent, args){
-                // code to get data from db / other source
-                console.log(parent)
-                return _.find(order, { id: args.id });
+                return _.find(order, {status:args.status, detail:{model:args.model,color:args.color,order_date:args.order_date}});
             }
-        }
+        },
     }
 });
-
+ 
 
 module.exports = new GraphQLSchema({
     query: RootQuery
